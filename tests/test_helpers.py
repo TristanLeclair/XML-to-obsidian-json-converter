@@ -11,6 +11,7 @@ from src.common.converter.helpers import (
     convert_traits,
     convert_actions,
     convert_legendary_actions,
+    convert_senses,
     convert_spells,
     convert_slots,
     convert_environment,
@@ -104,8 +105,6 @@ class TestHelpers(unittest.TestCase):
             "vulnerable": "fire",
             "immune": "poison",
             "conditionImmune": "poisoned",
-            "senses": "darkvision 60 ft.",
-            "passive": "10",
         }
         convert_resistances(monster)
         self.assertEqual(
@@ -119,6 +118,10 @@ class TestHelpers(unittest.TestCase):
         self.assertEqual(monster.get("immune"), None)
         self.assertEqual(monster["condition_immunities"], "poisoned")
         self.assertEqual(monster.get("conditionImmune"), None)
+
+    def test_convert_senses(self):
+        monster = {"senses": "darkvision 60 ft.", "passive": "10"}
+        convert_senses(monster)
         self.assertEqual(monster["senses"], "darkvision 60 ft., passive Perception 10")
         self.assertEqual(monster.get("passive"), None)
 
@@ -141,7 +144,7 @@ class TestHelpers(unittest.TestCase):
                 },
                 {
                     "name": "Source",
-                    "text": "Source of monster",
+                    "text": "Source of monster p. 123",
                 },
             ]
         }
@@ -153,7 +156,7 @@ class TestHelpers(unittest.TestCase):
                     {
                         "name": "Amphibious",
                         "desc": "The aboleth can breathe air and water.",
-                    },
+                    }
                 ],
                 "source": "Source of monster",
             },

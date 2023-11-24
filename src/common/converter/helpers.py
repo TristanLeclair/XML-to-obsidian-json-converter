@@ -34,7 +34,9 @@ def convert_monster(monster):
     convert_size(monster)
     convert_stats(monster)
     convert_saves(monster)
+    convert_skillsaves(monster)
     convert_resistances(monster)
+    convert_senses(monster)
     add_bestiary_trait(monster)
     convert_traits(monster)
     convert_actions(monster)
@@ -215,14 +217,15 @@ def add_bestiary_trait(monster):
 @verify_has_key(key="trait")
 def convert_traits(monster):
     source_trait = None
-    if isinstance(monster["trait"], list):
-        for trait in monster["trait"]:
+    traits = monster["trait"]
+    if isinstance(traits, list):
+        for trait in traits:
             wasSource = convert_trait(trait)
             if wasSource:
                 source_trait = trait
-    elif isinstance(monster["trait"], dict):
-        source_trait = monster["trait"]
-        convert_trait(monster["trait"])
+    elif isinstance(traits, dict):
+        source_trait = traits
+        convert_trait(traits)
 
     if source_trait:
         text = source_trait["text"]
@@ -232,6 +235,7 @@ def convert_traits(monster):
         else:
             books = text.split(" p.")[0]
         monster["source"] = books
+        monster["trait"].remove(source_trait)
     else:
         monster["source"] = "Not Found"
 
@@ -240,7 +244,7 @@ def convert_traits(monster):
 
 def convert_trait(trait) -> bool:
     source_trait = False
-    if "Source" in trait["name"]:
+    if "Source" == trait["name"]:
         source_trait = trait
     elif trait.get("text") is not None:
         trait["desc"] = trait.pop("text")
